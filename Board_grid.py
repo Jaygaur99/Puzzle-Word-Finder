@@ -72,6 +72,7 @@ class BoardGrid:
                     continue
                 else:
                     # If everything okay then put the word in that position
+                    self.word_position[word] = set()
                     for i in range(word_len):
                         character = word[i]
 
@@ -79,8 +80,11 @@ class BoardGrid:
                         new_position_y = y_position + i * step_y
 
                         self.grid[new_position_x][new_position_y] = character
-                    self.word_position[word] = [x_position, y_position, ending_x, ending_y]
+                        self.word_position[word].add((character, new_position_x, new_position_y))
                     placed = True
+        self.print_grid()
+
+    def fill_board(self):
         # Fill the remaining '_' with a random letter
         for x in range(self.grid_size):
             for y in range(self.grid_size):
@@ -95,8 +99,9 @@ class BoardGrid:
         for i in range(self.grid_size):
             print('\t' * 4 + '\t'.join(self.grid[i]))
 
-        print('Format : (Word = startX, startY, endX, endY)')
-        for word, pos in self.word_position.items():
-            start_x, start_y, end_x, end_y = pos
-            print(f'{word} = {start_x+1} {start_y+1} to {end_x+1} {end_y+1}')
+        print(self.word_position)
+        # print('Format : (Word = startX, startY, endX, endY)')
+        # for word, pos in self.word_position.items():
+        #     start_x, start_y, end_x, end_y = pos
+        #     print(f'{word} = {start_x+1} {start_y+1} to {end_x+1} {end_y+1}')
 
