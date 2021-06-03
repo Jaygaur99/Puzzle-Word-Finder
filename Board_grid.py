@@ -1,4 +1,5 @@
 from random import choice, randint
+from pprint import pprint
 STRINGS = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 ORIENTATIONS = ['updown', 'leftright', 'diagonalup', 'diagonaldown']
 
@@ -11,16 +12,16 @@ class BoardGrid:
         self.word_position = dict()
         self.grid_size = grid_size
         # Creating a basic _ grid of size 'grid_size'
-        self.grid = [['_' for _ in range(self.grid_size)] for _ in range(grid_size)]
+        self.grid = [['_' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         # method to create the grid
-        self.populate_grid(words)
+        self.words = words
+        self.populate_grid()
 
-    def populate_grid(self, words):
+    def populate_grid(self):
         """
         Creates the grid and puts the words in it.
-        :param words: words -> list
         """
-        for word in words:
+        for word in self.words:
             word_len = len(word)
             placed = False
             while not placed:
@@ -82,7 +83,7 @@ class BoardGrid:
                         self.grid[new_position_x][new_position_y] = character
                         self.word_position[word].add((character, new_position_x, new_position_y))
                     placed = True
-        self.print_grid()
+        self.fill_board()
 
     def fill_board(self):
         # Fill the remaining '_' with a random letter
@@ -104,4 +105,16 @@ class BoardGrid:
         # for word, pos in self.word_position.items():
         #     start_x, start_y, end_x, end_y = pos
         #     print(f'{word} = {start_x+1} {start_y+1} to {end_x+1} {end_y+1}')
+
+    def solution(self):
+        lst = [['  ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
+        for word in self.words:
+            for coordinates in self.word_position[word]:
+                letter, x, y = coordinates
+                lst[x][y] = letter
+
+        # for i in range(self.grid_size):
+        #     print('\t' * 4 + '\t'.join(lst[i]))
+
+        return lst
 

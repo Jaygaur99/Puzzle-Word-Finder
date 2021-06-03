@@ -64,7 +64,7 @@ class Board:
         ).grid(row=1, column=0, sticky='ew')
         # Export button
         self._export_button = tk.Button(
-            self._menu, text='Export', padx=1, pady=1, command=None
+            self._menu, text='Export', padx=1, pady=1, command=self._export
         )
         self._export_button.grid(row=1, column=1, sticky='ew')
         # Solution Button
@@ -146,10 +146,54 @@ class Board:
             print(word)
             self._labels[word].configure(bg=bg)
             for _, r, c in coordinates:
-                print(_ , r, c)
+                print(_, r, c)
                 self._buttons[r][c].configure(state=state, bg=bg)
 
     def _select_new(self):
         self._choose_random_words()
         self._reshuffle()
         self._create_labels()
+
+    def _export(self):
+        self._export_button.configure(state=tk.DISABLED)
+        with open('index.html') as template:
+            content = template.readlines()
+        number = 0
+        file_name = 'WordSearch.html'
+        while file_name in listdir(getcwd()):
+            number += 1
+            file_name = f'WordSearch{number}.html'
+
+        with open(file_name, 'w') as f:
+            # Write first few lines from templates
+            for i in range(11):
+                f.write(content[i])
+
+            # Create HTML Table Version of the Word Search Grid
+            f.write('<table align="center">\n')
+            for i in range(self._size):
+                f.write('\t<tr>\n\t\t')
+                for j in range(self._size):
+                    f.write(f'<td padding=2em>{self._word_search.grid[i][j]}</td>')
+                f.write('\t</tr>\n')
+            f.write('</table>\n<br><br>')
+
+            # Add solution to the bottom of the file
+            f.write('\n<br><br><h2 align="center">Solution</h2><br><br>\n')
+            board = self._word_search.solution()
+            f.write('<table align="center">\n')
+            for i in range(self._size):
+                f.write('\t<tr>\n\t\t')
+                for j in range(self._size):
+                    f.write(f'<td padding=1em>{board[i][j]}</td>')
+                f.write('\t</tr>\n')
+            f.write('</table>\n<br><br>')
+
+            # Add words used in the Word Search and the size of the board
+            f.write('\n<br><br><h2 align="center">Words</h2><br><br>\n')
+            f.write(f'''<ul align="center"><li>{'</li><li>'.join(self._words)}</li></ul>\n''')
+            f.write(f'\n<br><br><h2 align="center">SIZE: {self._size}x{self._size}</h2><br><br>\n')
+
+            # Write few last lines from templates
+            for i in range(11, 14):
+                f.write(content[i])

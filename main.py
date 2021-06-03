@@ -10,12 +10,13 @@ file = 'colors.txt'
 def main():
     # Creating instances of classes
     words = BoardWords(file)
-    # grid = BoardGrid(GRID_SIZE, words.words)
+    grid = BoardGrid(GRID_SIZE, words.words)
 
     # Calling the required function of the classes
-    # grid.print_grid()
+    grid.fill_board()
+    grid.print_grid()
     words.print_words()
-
+    grid.solution()
     # Calling the Board
     board = Board(words.words,GRID_SIZE, '#D6ED17', file)
 
