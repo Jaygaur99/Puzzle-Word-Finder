@@ -1,5 +1,4 @@
 from random import choice, randint
-from pprint import pprint
 STRINGS = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 ORIENTATIONS = ['updown', 'leftright', 'diagonalup', 'diagonaldown']
 
@@ -9,6 +8,11 @@ class BoardGrid:
     A class that basically represents the board of the puzzle.
     """
     def __init__(self, grid_size, words):
+        """
+        Initialize the Class
+        :param grid_size -> int: size of the grid
+        :param words -> List: list of the words read by file or provided by user
+        """
         self.word_position = dict()
         self.grid_size = grid_size
         # Creating a basic _ grid of size 'grid_size'
@@ -92,6 +96,7 @@ class BoardGrid:
                 if self.grid[x][y] == '_':
                     self.grid[x][y] = choice(STRINGS)
 
+    # CLI Method to print the grid
     def print_grid(self):
         """
         A method to print the grid
@@ -106,7 +111,12 @@ class BoardGrid:
         #     start_x, start_y, end_x, end_y = pos
         #     print(f'{word} = {start_x+1} {start_y+1} to {end_x+1} {end_y+1}')
 
+    @property
     def solution(self):
+        """
+        A method that provides the  solution of the puzzle
+        :return: list[list[]]
+        """
         lst = [['  ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         for word in self.words:
             for coordinates in self.word_position[word]:

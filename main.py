@@ -1,24 +1,13 @@
 from Board import Board
 from Board_words import BoardWords
-from Board_grid import BoardGrid
-
 # Size of Grid we want to play in.
 GRID_SIZE = 20
-file = 'colors.txt'
+file = 'words.txt'
 
 
 def main():
-    # Creating instances of classes
     words = BoardWords(file)
-    grid = BoardGrid(GRID_SIZE, words.words)
-
-    # Calling the required function of the classes
-    grid.fill_board()
-    grid.print_grid()
-    words.print_words()
-    grid.solution()
-    # Calling the Board
-    board = Board(words.words,GRID_SIZE, '#D6ED17', file)
+    Board(file, words.words, GRID_SIZE, '#D6ED17')
 
 
 if __name__ == '__main__':

@@ -5,9 +5,12 @@ WORDS_SHOW_PER_LINE = 5
 class BoardWords:
     """
     A class to take words from a file.
-    :param - filename -> string
     """
     def __init__(self, filename):
+        """
+        Initialize the words.
+        :param filename -> str
+        """
         handle = open(filename)
         words = handle.readlines()
         handle.close()
@@ -17,6 +20,7 @@ class BoardWords:
             self.words.append(w.upper().strip())
             words.remove(w)
 
+    # CLI Based print method
     def print_words(self):
         """
         A method to print the list of words that need to be find

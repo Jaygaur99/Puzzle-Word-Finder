@@ -7,7 +7,23 @@ from Board_grid import BoardGrid
 
 
 class Board:
-    def __init__(self, words=None, grid_size=10, color='#D6ED17', file='color.txt'):
+    """
+    The Board class is the GUI of the Board_grid class. The grid is displayed
+    on the left side of the app as a grid of buttons that capture which words
+    have been found. The right side of the GUI features a menu allowing the user
+    to see the solutions, reshuffle the board, or create a new board with
+    completely new words (randomly chosen from file_name). The user can also
+    export the current board as an html file containing the board in html <table>,
+    LaTeX and String form. This file also contains the solution.
+    """
+    def __init__(self, file, words=None, grid_size=10, color='#D6ED17'):
+        """
+        Initialize the Board GUI
+        :param words: words -> List (A list of words selected from the file or given by the user)
+        :param grid_size: grid_size -> int (Size of the grid)
+        :param color: color -> str (Colour code of the bg of user choice)
+        :param file: file -> str (File name of the file from where data is read)
+        """
         root = tk.Tk()
         root.title('Word Search Puzzle')
         root.resizable(width=False, height=False)
@@ -36,6 +52,7 @@ class Board:
         # Buttons that have been pushed
         self._pushed = set()
 
+        # Check if 'words' is None and if it is None then provide words
         if self._words is None:
             self._choose_random_words()
         else:
@@ -88,12 +105,18 @@ class Board:
         tk.mainloop()
 
     def _choose_random_words(self):
+        """
+        Chooses 10 new random  words from the file_name file.
+        """
         self._words = set()
         for _ in range(10):
             self._words.add(choice(self._words_txt).upper())
         self._words = list(self._words)
 
     def _create_labels(self):
+        """
+        Creates/changes the word labels on the right side of the GUI.
+        """
         for label in self._labels.values():
             label.destroy()
         self._labels.clear()
@@ -104,19 +127,31 @@ class Board:
             self._labels[word].grid(row=(i // 2) + (i % 1) + 3, column=i % 2, sticky='W')
 
     def _pressed(self, row, column):
+        """
+        Check for the button if it is pressed. Also checks if a certain
+        word is found or not and disables it if found.
+        :param row: row -> int (Number of row)
+        :param column: column -> int (Number of column)
+        """
         if self._buttons[row][column].cget('bg') == self._color:
             self._buttons[row][column].configure(bg='SystemButtonFace')
-            self._pushed.remove((self._buttons[row][column].cget('text'), column, row))
+            self._pushed.remove((self._buttons[row][column].cget('text'), row, column))
         else:
             self._buttons[row][column].configure(bg=self._color)
-            self._pushed.add((self._buttons[row][column].cget('text'), column, row))
+            self._pushed.add((self._buttons[row][column].cget('text'), row, column))
+
+            # Checks if a word is completely found or not.
             for word, coordinates in self._word_search.word_position.items():
-                if coordinates and self._pushed == coordinates:
-                    for _, c, r in coordinates:
+                if coordinates & self._pushed == coordinates:
+                    for _, r, c in coordinates:
                         self._buttons[r][c].configure(state=tk.DISABLED)
                     self._labels[word].configure(bg=self._color)
 
     def _reshuffle(self):
+        """
+        Command for the "Reshuffle" button. Uses the existing words and
+        creates a new word search board with the words in new locations.
+        """
         self._export_button.configure(text='Export', state=tk.NORMAL)
 
         if self._solution_shown:
@@ -133,6 +168,11 @@ class Board:
                 label.configure(bg="SystemButtonFace")
 
     def _solution(self):
+        """
+        Command for the "Solution" button. Toggles the solutions on/off when
+        pressed by lighting up the backgrounds of the buttons that contain
+        the words in the board.
+        """
         if self._solution_shown:
             bg = 'SystemButtonFace'
             state = tk.NORMAL
@@ -143,26 +183,36 @@ class Board:
 
         self._solution_shown = not self._solution_shown
         for word, coordinates in self._word_search.word_position.items():
-            print(word)
+            # print(word)
             self._labels[word].configure(bg=bg)
             for _, r, c in coordinates:
-                print(_, r, c)
+                #  print(_, r, c)
                 self._buttons[r][c].configure(state=state, bg=bg)
 
     def _select_new(self):
+        """
+        Command for the "New Words" button. Chooses a new randoms set of
+        words from the file_name file and fills up the board with the new
+        words and displays it in the GUI.
+        """
         self._choose_random_words()
         self._reshuffle()
         self._create_labels()
 
     def _export(self):
+        """
+        Command for the "Export" button. Creates an html file containing
+        a html table. Includes the solution and the words at the bottom
+        of the page.
+        """
         self._export_button.configure(state=tk.DISABLED)
-        with open('index.html') as template:
+        with open('templates/index.html') as template:
             content = template.readlines()
         number = 0
-        file_name = 'WordSearch.html'
+        file_name = 'Exported File/WordSearch.html'
         while file_name in listdir(getcwd()):
             number += 1
-            file_name = f'WordSearch{number}.html'
+            file_name = f'Exported File/WordSearch{number}.html'
 
         with open(file_name, 'w') as f:
             # Write first few lines from templates
@@ -180,12 +230,12 @@ class Board:
 
             # Add solution to the bottom of the file
             f.write('\n<br><br><h2 align="center">Solution</h2><br><br>\n')
-            board = self._word_search.solution()
+            board = self._word_search.solution
             f.write('<table align="center">\n')
             for i in range(self._size):
                 f.write('\t<tr>\n\t\t')
                 for j in range(self._size):
-                    f.write(f'<td padding=1em>{board[i][j]}</td>')
+                    f.write(f'<td padding=2em>{board[i][j]}</td>')
                 f.write('\t</tr>\n')
             f.write('</table>\n<br><br>')
 
