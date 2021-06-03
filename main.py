@@ -1,7 +1,7 @@
 from Board_words import BoardWords
 from Board_grid import BoardGrid
 # Size of Grid we want to play in.
-GRID_SIZE = 10
+GRID_SIZE = 20
 
 
 def main():

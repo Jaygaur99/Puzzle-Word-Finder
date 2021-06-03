@@ -8,6 +8,7 @@ class BoardGrid:
     A class that basically represents the board of the puzzle.
     """
     def __init__(self, grid_size, words):
+        self.word_position = dict()
         self.grid_size = grid_size
         # Creating a basic _ grid of size 'grid_size'
         self.grid = [['_' for _ in range(self.grid_size)] for _ in range(grid_size)]
@@ -78,6 +79,7 @@ class BoardGrid:
                         new_position_y = y_position + i * step_y
 
                         self.grid[new_position_x][new_position_y] = character
+                    self.word_position[word] = [x_position, y_position, ending_x, ending_y]
                     placed = True
         # Fill the remaining '_' with a random letter
         for x in range(self.grid_size):
@@ -92,3 +94,9 @@ class BoardGrid:
         print()
         for i in range(self.grid_size):
             print('\t' * 4 + '\t'.join(self.grid[i]))
+
+        print('Format : (Word = startX, startY, endX, endY)')
+        for word, pos in self.word_position.items():
+            start_x, start_y, end_x, end_y = pos
+            print(f'{word} = {start_x+1} {start_y+1} to {end_x+1} {end_y+1}')
+
